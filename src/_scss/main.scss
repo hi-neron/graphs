@@ -1,0 +1,8 @@
+@import 'libs/reset';
+@import 'libs/fonts';
+@import 'libs/colors';
+
+body {
+  background-color: $mainColor;
+  font-family: 'Noto Serif', serif;
+}
