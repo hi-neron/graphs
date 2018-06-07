@@ -1,7 +1,7 @@
 'use stric'
 import './_scss/main.scss'
-import html from 'choo/html'
 import content from './js'
+import html from 'choo/html'
 
 let innerW = window.innerWidth
 let innerH = window.innerHeight
@@ -15,6 +15,7 @@ canvas.setAttribute('width', innerW)
 canvas.setAttribute('height', innerH)
 
 let button = document.getElementById('button')
+let button2 = document.getElementById('button-download')
 
 let ctx = canvas.getContext("2d")
 let originX = canvas.width / 2
@@ -32,6 +33,15 @@ ctx.translate(originX, originY)
 button.addEventListener('mousedown', (e) => {
   ctx.fillText("", 0, 0);
   ctx.translate(-originX, -originY)
+})
+
+// obtiene una imagen para descargar
+button2.addEventListener('mousedown', (e) => {
+  let element = e.target
+  let imageURI = canvas.toDataURL('image/jpg')
+  element.href = imageURI
+
+
 })
 
 function animate () {
