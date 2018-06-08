@@ -9,14 +9,8 @@ module.exports = {
   // and webpack starts bundling
   devtool: 'inline-source-map',
   output: {
-    // options related to how webpack emits results
     path: path.resolve(__dirname, "public"), // string
-    // the target directory for all output files
-    // must be an absolute path (use the Node.js path module)
     filename: "bundle.js", // string
-    // the filename template for entry chunks
-    publicPath: "/public" // string
-    // // the url to the output directory resolved relative to the HTML page
   },
   module: {
     rules : [
