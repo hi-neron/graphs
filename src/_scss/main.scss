@@ -6,3 +6,18 @@ body {
   background-color: $mainColor;
   font-family: 'Noto Serif', serif;
 }
+
+#app {
+  position: relative;
+}
+canvas {
+  position: absolute;
+}
+.rubberBand {
+  z-index: 1;
+  position: absolute;
+  display: none;
+  background-color: transparent;
+  border: 1px solid salmon;
+  box-shadow: 2px 2px 0 rgba(#000, 0.1), 2px 2px 0 rgba(#000, 0.1) inset;
+}
