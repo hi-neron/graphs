@@ -7,7 +7,6 @@ module.exports = {
   entry: { main: "./src/app.js" }, // string | object | array
   // Here the application starts executing
   // and webpack starts bundling
-  devtool: 'inline-source-map',
   output: {
     path: path.resolve(__dirname, "public"), // string
     filename: "bundle.js", // string
@@ -35,9 +34,9 @@ module.exports = {
         use: [
           {
             loader: "html-loader",
-            options: {
-              minimize: true
-            }
+            // options: {
+            //   minimize: true
+            // }
           }
         ]
       },
