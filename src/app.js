@@ -4,68 +4,137 @@ import html from 'choo/html'
 import content from './js'
 
 let app = document.getElementById('app')
+let container = document.createElement('div')
+let canvasContainer = document.createElement('div')
+
+container.setAttribute('class', 'main')
+canvasContainer.setAttribute('class', 'canvas-container')
 
 let canvas = document.createElement('canvas')
 canvas.setAttribute('id', 'draw')
 
 let ctx = canvas.getContext('2d')
 
-let width = window.innerWidth
-let height = window.innerHeight
+let width = 640
+let height = 640
+
+container.appendChild(canvasContainer)
+app.appendChild(container)
+canvasContainer.appendChild(canvas)
 
 canvas.setAttribute('width', width)
 canvas.setAttribute('height', height)
 
-app.appendChild(canvas)
 
+// graph app
+// canvas
+// menu
 
-class MousePositions {
+class Enviroment {
   constructor () {
+    // reate menu bar
+    this.menu = document.createElement('div')
+    this.menu.setAttribute('class', 'main-menu')
+    this.bottomBar = document.createElement('div')
+    this.bottomBar.setAttribute('class', 'bottom-bar')
+
+    let bottomBarContainer = html`
+      <div className="bottom-bar-container">
+        ${this.bottomBar}
+      </div>
+    `
+    
+
+
+    // user posiiton
     this.x = canvas.width/2
     this.y = canvas.height/2
     this.side = - 30
+    
+    // Draw interfaz
+    this.bufferDraw = []
+
+    // utilities
+    this.init()
+
+    // addMenu
+    container.appendChild(this.menu)
+    container.appendChild(bottomBarContainer)
   }
 
-  guides (x, y) {
+  init() {
+    this.drawLine()
+    this.drawSquare()
+    this.drawStar()
+    this.drawCircle()
+    // boTTom bar
+    this.drawBottomBar()
+  }
+
+  drawBottomBar() {
+    this.bottomBar.innerHTML = `<span>X</span>: ${this.x}, <span>Y</span>: ${this.y}`
+  }
+
+  drawStar () {
+    this.starButton = html`
+      <div className="utils star">
+        <div className="utils-star-icon"></div>
+      </div>
+    `
+    this.menu.appendChild(this.starButton)
+  }
+
+  drawCircle () {
+    this.circleButton = html`
+      <div className="utils circle">
+        <div className="utils-circle-icon"></div>
+      </div>
+    `
+    this.menu.appendChild(this.circleButton)
+  }
+
+  drawSquare () {
+    this.squareButton = html`
+      <div className="utils square">
+        <div className="utils-square-icon"></div>
+      </div>
+    `
+    this.menu.appendChild(this.squareButton)
+  }
+
+  drawLine () {
+    this.lineButton = html`
+      <div className="utils square">
+        <div className="utils-square-icon"></div>
+      </div>
+    `
+    this.menu.appendChild(this.lineButton)
+  }
+
+  //mouse
+  userPosition (x, y) {
     this.x = x
     this.y = y
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    this.lineVertical()
-    this.lineHorizontal()
   }
 
-  changeSide () {
-    if(this.x > canvas.width / 2) {
-      this.side = -30
-    } else {
-      this.side = 5
-    }
-  }
-
-  lineVertical() {
-    this.changeSide()
-    ctx.strokeStyle = 'salmon'
-    ctx.beginPath()
-    ctx.moveTo(this.x, 0)
-    ctx.lineTo(this.x, canvas.height)
-    ctx.stroke()
-    ctx.fillText(`x: ${this.x}`, this.x + this.side, this.y - 3)
-  }
-  
-  lineHorizontal() {
-    ctx.strokeStyle = 'salmon'
-    ctx.beginPath()
-    ctx.moveTo(0, this.y)
-    ctx.lineTo(canvas.width, this.y)
-    ctx.stroke()
-    ctx.fillText(`y: ${this.y}`, this.x + this.side, this.y + 10)
+  draw () {
+    this.drawBottomBar()
   }
 }
 
 canvas.onmousemove = function(e) {
-  let x = e.clientX
-  let y = e.clientY
-  enviroment.guides(x, y)
+  let x = e.offsetX
+  let y = e.offsetY
+  main.userPosition(x, y)
 }
 
-let enviroment = new MousePositions()
+function animate () {
+  main.draw()
+  window.requestAnimationFrame(animate)
+}
+
+let main = new Enviroment()
+
+document.body.onload = function () {
+  animate()
+}

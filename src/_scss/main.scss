@@ -1,8 +1,28 @@
 @import 'libs/reset';
 @import 'libs/fonts';
 @import 'libs/colors';
+@import 'libs/mainMenu';
+@import 'libs/outils';
+@import 'libs/bottomBar';
 
 body {
   background-color: $mainColor;
-  font-family: 'Noto Serif', serif;
+  font-family: 'Roboto Mono', serif;
+  #app {
+    .main {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+
+      .canvas-container {
+        position: absolute;
+        background-color: $boardColor;
+        box-shadow: 0px 0px 5px rgba(#000, 0.2), 0px 10px 0px 0px rgba(#000, 0.2);
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%)
+        
+      }
+    }
+  }
 }

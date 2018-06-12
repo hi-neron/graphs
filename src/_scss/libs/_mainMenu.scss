@@ -1,0 +1,29 @@
+.main-menu {
+  position: fixed;
+  width: 81px;
+  background-color: $menuColor;
+  border: 1px solid $menuColor;
+  top: 5px;
+  left: 5px;
+  display: grid;
+  grid-template-columns: 40px 40px;
+  box-shadow: 4px 8px 0 rgba(#000, 0.15);
+
+  border-radius: 3px;
+  z-index: 1;
+  
+  .utils{
+    border-radius: 2px;
+    width: 100%;
+    height: 40px;
+    background-color: $utilsColor;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgb(245, 255, 255);
+    }
+  }
+
+  .square {
+  }
+}

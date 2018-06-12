@@ -1,0 +1,19 @@
+.bottom-bar-container {
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  height: 25px;
+  width: 100%;
+  background-color: $bottomBar;
+  color: $utilsColor;
+  
+  .bottom-bar {
+    font-size: 0.8em;
+    margin-top: 5px;
+    margin-left: 10px;
+    span {
+      color: pink;
+      font-weight: 700;
+    }
+  }
+}
