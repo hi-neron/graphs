@@ -10,6 +10,7 @@ let canvasContainer = document.createElement('div')
 
 container.setAttribute('class', 'main')
 canvasContainer.setAttribute('class', 'canvas-container')
+canvasContainer.setAttribute('id', 'main-container')
 
 let canvas = document.createElement('canvas')
 canvas.setAttribute('id', 'draw')
@@ -31,10 +32,14 @@ canvas.setAttribute('height', height)
 // canvas
 // menu
 
-class Enviroment {
+class Environment {
   constructor () {
     this.width = width
     this.height = height
+
+    // hit canvas
+    this.hitCanvas = document.createElement('canvas')
+    this.hitCanvas.setAttribute('class', 'hit-canvas')
 
     // reate menu bar
     this.menu = document.createElement('div')
@@ -60,7 +65,7 @@ class Enviroment {
 
     // graphics
     this.graphicsDraw = []
-    this.drawingBoss = new DrawingBoss(ctx, this.graphicsDraw, this.communicator)
+    this.drawingBoss = new DrawingBoss(ctx, this.graphicsDraw, this.communicator, canvasContainer)
     
     // the board
     this.canvas = canvas
@@ -111,15 +116,19 @@ class Enviroment {
       let y = e.offsetY
       _this.userPosition(x, y)
       let tool = _this.communicator.activate()
-      if (tool) {
-        _this.drawing = true
-        try {
-          _this.figureOnBuffer = new _this.figures[tool](ctx, x, y)
-        } catch (e) {
-          _this.communicator.error('util error')
-        }
+      if (_this.drawingBoss.focus) {
+        console.log('online')
       } else {
-        _this.drawing = false
+        if (tool) {
+          _this.drawing = true
+          try {
+            _this.figureOnBuffer = new _this.figures[tool](ctx, x, y)
+          } catch (e) {
+            _this.communicator.error('util error')
+          }
+        } else {
+          _this.drawing = false
+        }
       }
     }
 
@@ -131,6 +140,7 @@ class Enviroment {
       _this.userPosition(x, y)
       if(_this.drawing) {
         ctx.clearRect(0, 0, _this.width, _this.height)
+        _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
         _this.figureOnBuffer.sizing(x, y)
         _this.drawingBoss.exec()
       } else {
@@ -146,6 +156,7 @@ class Enviroment {
       if(_this.drawing) {
         _this.drawingBoss.newFigure(_this.figureOnBuffer)
         ctx.clearRect(0, 0, _this.width, _this.height)
+        _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
         _this.drawingBoss.exec()
         _this.drawing = false
       }
@@ -226,20 +237,14 @@ class Enviroment {
     this.x = x
     this.y = y
   }
-
-  draw () {
-    // console.log(this.drawBag)
-    // this.drawBottomBar()
-  }
 }
 
-function animate () {
-  main.draw()
-  window.requestAnimationFrame(animate)
-}
+// function animate () {
+//   main.draw()
+//   window.requestAnimationFrame(animate)
+// }
 
-let main = new Enviroment()
 
 document.body.onload = function () {
-  animate()
+  let main = new Environment()
 }
