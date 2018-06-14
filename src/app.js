@@ -2,7 +2,7 @@
 import './_scss/main.scss'
 import html from 'choo/html'
 import { Line, DrawingBoss } from './js/figures/figures'
-import Communicator from './js/tools';
+import Communicator from './js/communicator';
 
 let app = document.getElementById('app')
 let container = document.createElement('div')
@@ -69,9 +69,6 @@ class Environment {
     
     // the board
     this.canvas = canvas
-    this.figures = {
-      line: Line
-    }
 
     let bottomBarContainer = html`
       <div className="bottom-bar-container">
@@ -116,20 +113,43 @@ class Environment {
       let y = e.offsetY
       _this.userPosition(x, y)
       let tool = _this.communicator.activate()
-      if (_this.drawingBoss.focus) {
-        console.log('online')
-      } else {
-        if (tool) {
-          _this.drawing = true
-          try {
-            _this.figureOnBuffer = new _this.figures[tool](ctx, x, y)
-          } catch (e) {
-            _this.communicator.error('util error')
-          }
-        } else {
-          _this.drawing = false
-        }
-      }
+      _this.drawingBoss.startAction(tool, x, y)
+
+      // if (tool) {
+      //   /**
+      //    Creation mode
+      //    abrir una herramienta
+      //    */
+      //   console.log(`creating ${tool}`)
+      //   _this.drawing = true
+      //   _this.drawingBoss.startAction(tool, x, y)
+      // } else if (tool) {
+      //   /*
+      //   Edition mode
+      //   dar click en una linea
+      //   */
+      //  console.log(`editing ${piece}`)
+      // } else {
+      //   console.log('nothing in particular')
+      // }
+
+      // // Creation Mode
+      // if (tool && !util) {
+      //   console.log('Tool mode')
+      //   _this.drawing = true
+      //   _this.editing = false
+      //   try {
+
+      //   } catch (e) {
+      //     _this.communicator.error('util error')
+      //   }
+      //   // Edition mode
+      // } else {
+      //   console.log('Edition mode')
+      //   _this.drawing = false
+      //   _this.editing = true
+      //   _this.drawingBoss.getFigure()
+      // }
     }
 
 
@@ -138,28 +158,32 @@ class Environment {
       let y = e.offsetY
       _this.drawBottomBar()
       _this.userPosition(x, y)
-      if(_this.drawing) {
-        ctx.clearRect(0, 0, _this.width, _this.height)
-        _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
-        _this.figureOnBuffer.sizing(x, y)
-        _this.drawingBoss.exec()
-      } else {
-        _this.drawingBoss.onMouse(x, y)
-      }
+      ctx.clearRect(0, 0, _this.width, _this.height)
+      _this.drawingBoss.constructAction()
+      // if(_this.drawing) {
+      //   _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
+      //   _this.drawingBoss.sizing(x, y)
+      //   _this.drawingBoss.exec()
+      // } else {
+      //   _this.drawingBoss.onMouse(x, y)
+      // }
     }
 
-    this.canvas.onmouseup = function(e) {
+    window.onmouseup = function(e) {
       let x = e.offsetX
       let y = e.offsetY
       _this.drawBottomBar()
       _this.userPosition(x, y)
-      if(_this.drawing) {
-        _this.drawingBoss.newFigure(_this.figureOnBuffer)
-        ctx.clearRect(0, 0, _this.width, _this.height)
-        _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
-        _this.drawingBoss.exec()
-        _this.drawing = false
-      }
+      _this.drawingBoss.endAction()
+
+      // if(_this.drawing) {
+      //   _this.drawingBoss.newFigure(_this.figureOnBuffer)
+      //   ctx.clearRect(0, 0, _this.width, _this.height)
+      //   _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
+      //   _this.drawingBoss.exec()
+      //   _this.drawing = false
+      // }
+      // _this.drawingBoss.colorKey = null
     }
   }
 
@@ -168,6 +192,7 @@ class Environment {
   }
 
   init() {
+    this.cursor()
     this.drawLine()
     this.drawSquare()
     this.drawCircle()
@@ -178,6 +203,21 @@ class Environment {
 
   drawBottomBar() {
     this.bottomBarMouse.innerHTML = `<span>X</span>: ${this.x}, <span>Y</span>: ${this.y}`
+  }
+
+  cursor () {
+    this.cursorButton = html`
+      <div className="utils cursor" title="cursor">
+        <div className="utils-cursor-icon">
+          <svg width="36" height="36">
+            <g transform="translate(8, 8)">
+              <path d="M4 0l16 12.279-6.78 1.138 4.256 8.676-3.902 1.907-4.281-8.758-5.293 4.581z" stroke="rgb(255, 153, 170)" fill="rgba(255, 192, 203, 0.2)" stroke-width="2px" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    `
+    this.menu.appendChild(this.cursorButton)
   }
 
   drawStar () {

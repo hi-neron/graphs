@@ -5,7 +5,7 @@ export default class Tools {
   constructor (ctx, container, bottomBar) {
     this.container = container
     this.ctx = ctx
-    this.toolActivate = null
+    this.toolActivate = 'cursor'
     this.bottomBar = bottomBar
     this.utilInfo = document.createElement('div')
     this.utilError = document.createElement('div')
@@ -32,15 +32,16 @@ export default class Tools {
   }
 
   activate () {
-    return this.toolActivate ? this.toolActivate : null
+    return this.toolActivate ? this.toolActivate : 'cursor'
   }
 
   bottomBarChange () {
     let template = html`
     <div className="bottom-bar-info">
-      <span> making a </span> ( ${this.toolActivate} )
+      <span> Tool activate  </span> ( ${this.toolActivate} )
     </div>
     `
+    this.ctx.canvas.style.cursor = 'crosshair'
     empty(this.utilInfo).appendChild(template)
   }
 
@@ -52,5 +53,13 @@ export default class Tools {
     }, 3000);
   }
 
-  mouseIconChange () {}
+  mouseIconChange () {
+    if (this.toolActivate !== 'cursor') {
+      this.ctx.canvas.style.cursor = 'crosshair'
+      console.log('crosshair')
+    } else {
+      this.ctx.canvas.style.cursor = 'pointer'
+      console.log('cursor')
+    }
+  }
 }
