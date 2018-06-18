@@ -97,6 +97,7 @@ class Environment {
       try {
         let utilActive = e.target.closest('.utils').title
         _this.communicator.prepare(utilActive)
+        _this.drawingBoss.setUtil(utilActive)
       } catch (e) {
       }
     })
@@ -113,7 +114,7 @@ class Environment {
       let y = e.offsetY
       _this.userPosition(x, y)
       let tool = _this.communicator.activate()
-      _this.drawingBoss.startAction(tool, x, y)
+      _this.drawingBoss.startAction( x, y)
 
       // if (tool) {
       //   /**
@@ -158,8 +159,9 @@ class Environment {
       let y = e.offsetY
       _this.drawBottomBar()
       _this.userPosition(x, y)
+      // follow mouse user posiiton
       ctx.clearRect(0, 0, _this.width, _this.height)
-      _this.drawingBoss.constructAction()
+      _this.drawingBoss.userSupervisor(x, y)
       // if(_this.drawing) {
       //   _this.drawingBoss.ctxH.clearRect(0, 0, _this.width, _this.height)
       //   _this.drawingBoss.sizing(x, y)
@@ -173,7 +175,6 @@ class Environment {
       let x = e.offsetX
       let y = e.offsetY
       _this.drawBottomBar()
-      _this.userPosition(x, y)
       _this.drawingBoss.endAction()
 
       // if(_this.drawing) {

@@ -55,8 +55,6 @@ class Line  {
     // para sumarlo a las posisicones
     let x1 = this.x1
     let y1 = this.x2
-
-    console.log(sumX, sumY)
   }
 
   draw() {
@@ -102,12 +100,15 @@ class DrawingBoss {
       line: Line
     }
 
+    this.util = 'cursor'
+
     // hit canvas
     canvasContainer.appendChild(hitCanvas)
 
     // focused figures
     this.colorKey = null
-    this.editing = false
+    this.editing = true
+    this.drawing = false
 
     hitCanvas.setAttribute('width', this.canvas.width)
     hitCanvas.setAttribute('height', this.canvas.height)
@@ -116,54 +117,100 @@ class DrawingBoss {
     this.communicator = communicator
   }
 
-  startAction (tool, x, y) {
-    if (tool !== 'cursor') {
+  setUtil (util) {
+    this.util = util
+    switch (this.util) {
+      case 'cursor':
+        this.drawing = false
+        this.editing = true
+        break;
+      case 'line':
+        this.drawing = true
+        this.editing = false
+        break;
+      default:
+        this.drawing = false
+        this.editing = true
+        break; 
+    }
+    this.action = null
+  }
+  startAction (x, y) {
+    if (this.util !== 'cursor' && !this.action) {
       /** 
        * busca si esta el cursor activado para entrar en modo
        * CREACION
       */
-      this.edit = false
-      this.figureOnBuffer = new this.possibleFigures[tool](this.ctx, x, y)
-      console.log(this.figureOnBuffer.x1,this.figureOnBuffer.y1)
+      this.action = true
+      this.drawing = true
+      this.editing = false
+      this.figureOnBuffer = new this.possibleFigures[this.util](this.ctx, x, y)
     } else {
       /*
         Entra en modo edicion
       */
-      this.edit = true
-      console.log('cursor on')
+      this.drawing = false
+      this.editing = true
     }
   }
 
-  constructAction (x, y) {
-    let c = this.ctxH.getImageData(x, y, 1, 1).data
+  userSupervisor(x, y) {
+    /**
+      Detecta la posicion del usuario
+    */
+    this.x = x
+    this.y = y
+
+    // si se esta editando
+    console.log(this.figures)
+    if (this.drawing && this.action){
+      this.figureOnBuffer.sizing(this.x, this.y)
+      console.log('drawing supervisor')
+    } else if (this.editing){
+      console.log('editing', this.drawing, this.editing)
+      this.onHoverImage()
+    } else {
+      console.log(this.drawing, this.editing)
+    }
+
+    this.exec()
+    // si se esta dibujando
+  }
+
+  onHoverImage () {
+    let c = this.ctxH.getImageData(this.x, this.y, 1, 1).data
     let color = `rgb(${c[0]}, ${c[1]}, ${c[2]})`
+    
+    for (let i = 0; i < this.figures.length; i++) {
+      let figure = this.figures[i]
+      let fColor = figure.hitColor
+      if (color === fColor) {
+        figure.over()
+      } else {
+        figure.normal()
+      }
+    }
 
-    // this.ctxH.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)    
+  }
 
-    // for (let i = 0; i < this.figures.length; i++) {
-    //   let figure = this.figures[i]
-    //   if (color === fColor) {
-    //     figure.over()
-    //   } else {
-    //     figure.normal()
-    //   }
-    // }
+  constructAction (x, y) {
   }
 
   endAction() {
-
+    if (this.drawing && this.figureOnBuffer) {
+      this.newFigure(this.figureOnBuffer)
+      this.action = null
+      this.figureOnBuffer = null
+    } 
   }
 
   newFigure (figure) {
     let created = figure.finished()
     this.colorKey = null
+
     if (created) {
-      this.editing = false
-      this.focus = null
       this.figures.push(figure)
-    } else if (this.focus) {
-      this.getFigure()
     } else {
       this.communicator.error('impossible figure')
     }
@@ -186,7 +233,6 @@ class DrawingBoss {
       if (this.colorKey === fColor) {
         this.focus = figure
         this.editing = true
-        console.log(this.focus)
         break;
       } else {
         this.focus = null

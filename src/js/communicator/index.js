@@ -41,7 +41,6 @@ export default class Tools {
       <span> Tool activate  </span> ( ${this.toolActivate} )
     </div>
     `
-    this.ctx.canvas.style.cursor = 'crosshair'
     empty(this.utilInfo).appendChild(template)
   }
 
@@ -56,10 +55,10 @@ export default class Tools {
   mouseIconChange () {
     if (this.toolActivate !== 'cursor') {
       this.ctx.canvas.style.cursor = 'crosshair'
-      console.log('crosshair')
+      console.log(this.toolActivate)
     } else {
-      this.ctx.canvas.style.cursor = 'pointer'
-      console.log('cursor')
+      this.ctx.canvas.style.cursor = null
+      console.log(this.toolActivate, 'aqui loco')
     }
   }
 }
