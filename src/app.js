@@ -1,7 +1,9 @@
 'use stric'
+// import html from 'choo/html'
 import './_scss/main.scss'
-import { Ball } from './modules/class'
-import html from 'choo/html'
+import { SinLine } from './modules/class'
+
+// _ _ _ _ _ _
 
 let app = document.getElementById('app')
 let canvas = document.createElement('canvas')
@@ -25,7 +27,6 @@ class Environment {
     this.createdItems = []
     this.ctx = ctx
     this.counter = 0
-    
     this.user = {
       x : null,
       y : null
@@ -39,30 +40,37 @@ class Environment {
     })
   }
 
-  createBall (x, y, r, t) {
-    let newElement = new Ball(this.ctx, x, y, r, t)
+  createSinLine (x, y, r, t) {
+    let newElement = new SinLine(this.ctx, x, y, r, t)
     this.createdItems.push(newElement)
-    newElement.draw()
   }
 
   animate() {
     this.ctx.clearRect(0, 0, width, height)
-    console.log(this.user)
+
     let _this_ = this
     this.counter += 0.2
 
     this.createdItems.forEach( el => {
-      el.move(_this_.user.x, _this_.user.y, _this_.counter)
+      el.move(_this_.user.x)
     })
   }
 }
 
 let myEnvironment = new Environment()
+let d = width / 2 + 100
 
-myEnvironment.createBall(width/2, height/2, 1, 5)
-myEnvironment.createBall(width/2, height/2, 1.2, 15)
-myEnvironment.createBall(width/2, height/2, 1.5, 25)
-myEnvironment.createBall(width/2, height/2, 2, 35)
+let p1 = {
+  x: width / 2 - d,
+  y: 5
+}
+
+let p2 = {
+  x: width / 2 + d,
+  y: 5
+}
+
+myEnvironment.createSinLine(p1, p2, d)
 
 function animate () {
   myEnvironment.animate()

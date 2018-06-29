@@ -2,38 +2,91 @@ import { createContext } from "vm";
 
 'use strict'
 
-export class Ball {
-  constructor (ctx, x, y, r, rad = 20) {
-    this.x = x
-    this.y = y
-    this.r = r
-    this.rad = rad
+export class SinLine {
+  constructor (ctx, p1, p2, dimension) {
+    this.x1 = p1.x
+    this.y1 = p1.y
+    this.x2 = p2.x
+    this.y2 = p2.y
     this.ctx = ctx
-  }
+    this.d = dimension
+    this.yFactor = 0
+    this.sensitiveAreaF = 10
 
-  draw () {
-    this.ctx.beginPath()
-    this.ctx.arc(this.x, this.y, this.r, 0, 2*Math.PI)
-    this.ctx.fillStyle = "red"
-    this.ctx.fill()
-    this.ctx.closePath()
-  }
+    this.qu = 0.15
 
-  move (x, y, r) {
-    // let deltaX = this.x - x
-    // let deltaY = this.y - y
+    this.yMax = ctx.canvas.height
 
-    let force = this.rad // Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-    
-    let newX = force * Math.cos(r)
-    let newY = force * Math.sin(r)
-    
+    this.definition = 60
 
-    this.x = x + newX
-    this.y = y + newY
+    let deltaX = this.x2 - this.x1
+    let deltaY = this.y2 - this.y1
 
-    console.log(force)
+    this.size = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    this.angle = Math.atan2(deltaY, deltaX)
+
+    this.longPiece = this.size / this.definition
+
+    this.points = []
+
+    let xi = this.x1
+    let yi = this.y1
+
+    for (let p = 0; p < this.definition; p++) {
+      let x = xi + (this.longPiece * Math.cos(this.angle))
+      let y = yi + (this.longPiece * Math.sin(this.angle))
+      let newPoint = {
+        x0 : x,
+        y0 : y,
+        x,
+        y
+      }
+      xi = x
+      yi = y
+      this.points.push(newPoint)
+    }
 
     this.draw()
+  }
+
+  draw (x) {
+    let deltaX = this.x2 - this.x1
+    let min = Math.min(this.x1, this.x2)
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(this.x1, this.y1)
+    let _this_ = this
+    for (let p = 0; p < this.points.length; p++) {
+      // look for x at te same point
+      this.points.forEach(el => {
+        if ( x > el.x - _this_.longPiece * _this_.sensitiveAreaF && x < el.x + _this_.longPiece * _this_.sensitiveAreaF) {
+          el.y += this.qu
+          if (el.y > el.y0 + _this_.yMax) {
+            el.y = el.y0 + _this_.yMax
+          }
+        } else {
+          el.y -= this.qu
+          if (el.y < el.y0 ) {
+            el.y = el.y0
+          }
+        }
+      });
+      this.ctx.lineTo(this.points[p].x, this.points[p].y)
+    }
+    this.ctx.lineTo(this.x2, this.y2 - 400)
+    this.ctx.lineTo(this.x1, this.y1 - 400)
+
+    this.ctx.strokeStyle = 'rgb(55, 55, 55)'
+    this.ctx.fillStyle = 'rgb(10, 0, 20)'
+    this.ctx.shadowOffsetY = 15
+    this.ctx.shadowBlur = 0
+    this.ctx.shadowColor = 'rgba(119, 80, 75, 0.3)'
+    this.ctx.fill()
+    this.ctx.closePath()
+
+  }
+
+  move (x) {
+    this.draw(x)
   }
 }
