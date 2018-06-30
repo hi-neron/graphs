@@ -34,7 +34,7 @@
 
 ## TEXT
 
-**fillText()** > Draw Filled text  
+**fillText(string, x, y)** > Draw Filled text  
 **strokeText()** > Draw text on canvas "only outer line"
 **measureText()** > Return an objet that contains the width of the specified string
 
