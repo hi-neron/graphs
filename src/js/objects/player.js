@@ -5,7 +5,7 @@ function random (long) {
 }
 
 function gravity (m1, m2, d) {
-  const G = 0.0005 // le G du un monde dans caricature
+  const G = 0.0002 // le G du un monde dans caricature
   return G * (m1 * m2 / d)
 }
 
@@ -92,23 +92,32 @@ export class Player {
 
     this.objects.push(interObj)
   }
-
   live() {
     for (let o = 0; o < this.objects.length; o++) {
       let obj = this.objects[o]
       let deltaX = obj.x - this.x
       let deltaY = obj.y - this.y
 
-      if (obj.distance - obj.sz < 100) {
-        this.actualWorld = obj
-        console.log(this.actualWorld.name)
-      }
-
+      
       obj.distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
       obj.force = gravity(this.mass, obj.mass, obj.distance)
       this.x = this.x + (obj.force * Math.cos(obj.angleTo))
       this.y = this.y + (obj.force * Math.sin(obj.angleTo))
       obj.angleTo = Math.atan2(deltaY, deltaX)
+
+      if (obj.distance - obj.sz < 50) {
+        this.actualWorld = obj
+      }
+    }
+    
+    if (this.actualWorld) {
+      for (let i = 0; i < this.actualWorld.points.length - 1; i++) {
+        let pointAngle = this.actualWorld.points[i].p
+        let pointAngle2 = this.actualWorld.points[i + 1].p
+        if (this.actualWorld.angleTo > pointAngle && this.actualWorld.angleTo < pointAngle2) {
+          console.log(pointAngle, pointAngle2)
+        }
+      }
     }
 
     this.draw()
